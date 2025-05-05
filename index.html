@@ -1,1 +1,183 @@
-<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>404 Not Found</title><link href=main.5968d5567149ddb664c5.css rel=stylesheet></head><body><nav class=navbar><ul></ul></nav><main><div class=message><strong>404</strong><p class=title>YOU ARE NOT MEANT TO BE HERE</p><p class=message-text>Hey visitor, guess what? I have a new, shinier, website! (paulbaniqued.com)</p><p class=message-text>Please check it out. It's awesome!</p><a href="https://paulbaniqued.com/" class="button">VISIT MY NEW WEBSITE</a></div></main><div class=box-astronaut><img src=imgs/astronaut.e2b60a65821122a3377a8f0f01d68285.svg alt=""></div><script src=main.5f4bd23c1c2dccd1184c.bundle.js></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paul Baniqued - Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Landing Section -->
+  <section id="landing">
+    <div class="landing-container">
+      <img src="images/profile.jpg" alt="Paul Baniqued" class="profile-img" />
+      <div class="intro-text">
+        <p>HI, I'M</p>
+        <h1>PAUL BANIQUED</h1>
+        <p class="role green">ROBOTICS AND NEUROTECH ENGINEER</p>
+        <p class="role green">VIRTUAL REALITY DEVELOPER</p>
+        <p class="role green">PRODUCT AND PROJECT MANAGER</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Me Section -->
+  <section id="about">
+    <div class="marquee">
+      <div class="marquee-content">
+        ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     
+      </div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider" id="slider">
+        <div class="slide active">
+          <img src="images/placeholder_about1.gif" alt="About GIF 1" />
+          <h2>Experienced Robotics Engineer and Virtual Reality Developer</h2>
+          <p>With over a decade of experience in robotics engineering and six years in virtual reality development, I have dedicated 
+            my academic career to designing innovative robotic systems, simulations, and VR interfaces for real-world applications.</p>
+        </div>
+        <div class="slide">
+          <img src="images/placeholder_about2.gif" alt="About GIF 2" />
+          <h2>User-Centred Research and Design Thinking</h2>
+          <p>I apply a user-centred approach to my work, creating meaningful product designs and prototypes. 
+            I have conducted effective and empathetic user studies for various hardware and software products, enabling organisations to gain deeper insights into their customers.</p>
+        </div>
+        <div class="slide">
+          <img src="images/placeholder_about3.gif" alt="About GIF 3" />
+          <h2>Strategic Product and Project Manager</h2>
+          <p>With a portfolio that includes managing ambitious programmes in robotics, artificial intelligence, and health technologies, 
+            I have led multidisciplinary teams of academics, engineers, and business leaders. I collaborate with stakeholders to streamline processes, secure successful funding proposals, and deliver impactful solutions for my organisations and their communities.</p>
+        </div>
+      </div>
+      <button class="slider-nav left" onclick="moveSlide(-1)">&#10094;</button>
+      <button class="slider-nav right" onclick="moveSlide(1)">&#10095;</button>
+    </div>
+
+    <!-- 
+    <div class="button-container">
+      <a href="#" class="section-button">→ More About Me</a>
+    </div>
+    -->
+
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects">
+    <div class="marquee">
+      <div class="marquee-content">
+        PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     
+      </div>
+    </div>
+
+    <div class="project-grid">
+      <div class="project-card">
+        <div class="project-img-container">
+          <img src="images/project_cradle.jpg" alt="Project 1" />
+          <div class="overlay"></div>
+        </div>
+        <h3>CRADLE Robotics Prosperity Partnership</h3>
+        <p class="project-description">Technical Program Manager</p>
+      </div>
+      <div class="project-card">
+        <div class="project-img-container">
+          <img src="images/project_rai.jpg" alt="Project 2" />
+          <div class="overlay"></div>
+        </div>
+        <h3>Manchester Centre for Robotics and AI</h3>
+        <p class="project-description">Technical Program Manager</p>
+      </div>
+      <div class="project-card">
+        <div class="project-img-container">
+          <img src="images/project_sarese.jpg" alt="Project 3" />
+          <div class="overlay"></div>
+        </div>
+        <h3>SARESE</h3>
+        <p class="project-description">VR Developer, Robotics Engineer, Postdoc Researcher</p>
+      </div>
+      <div class="project-card">
+        <div class="project-img-container">
+          <img src="images/project_rain.jpg" alt="Project 4" />
+          <div class="overlay"></div>
+        </div>
+        <h3>Robotics and AI in Nuclear</h3>
+        <p class="project-description">VR Developer, Robotics Engineer, Postdoc Researcher</p>
+      </div>
+      <div class="project-card">
+        <div class="project-img-container">
+          <img src="images/project_icon.jpg" alt="Project 5" />
+          <div class="overlay"></div>
+        </div>
+        <h3>Immersive Cognition Laboratory</h3>
+        <p class="project-description">Research Engineer, PhD Researcher</p>
+      </div>
+      <div class="project-card">
+        <div class="project-img-container">
+          <img src="images/project_agapay.jpg" alt="Project 6" />
+          <div class="overlay"></div>
+        </div>
+        <h3>Agapay Project</h3>
+        <p class="project-description">Lead Research Engineer</p>
+      </div>
+    </div>
+
+    <div class="button-container">
+      <a href="#" class="section-button">→ View Full Portfolio</a>
+    </div>
+  </section>
+
+  <!-- Connect Section -->
+  <section id="connect">
+    <div class="marquee">
+      <div class="marquee-content">
+        LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-left">© P.D.E. Baniqued</div>
+    <div class="footer-center">
+      <a href="#">LinkedIn</a> | <a href="#">GitHub</a> | <a href="#">Contact</a>
+    </div>
+    <div class="footer-right"><a href="#landing">Back to Top</a></div>
+  </footer>
+
+  <!-- JS -->
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        slide.style.opacity = '0';
+        if (i === index) {
+          slide.classList.add('active');
+          slide.style.opacity = '1';
+        }
+      });
+    }
+
+    function moveSlide(direction) {
+      currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+      showSlide(currentSlide);
+      resetAutoSlide();
+    }
+
+    let slideInterval = setInterval(() => moveSlide(1), 5000);
+
+    function resetAutoSlide() {
+      clearInterval(slideInterval);
+      slideInterval = setInterval(() => moveSlide(1), 5000);
+    }
+
+    showSlide(currentSlide);
+  </script>
+
+</body>
+</html>
