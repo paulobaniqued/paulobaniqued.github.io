@@ -1,183 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Paul Baniqued - Portfolio</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paul Baniqued | Portfolio</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header class="top-bar">
+    <nav class="top-nav">
+      <a class="nav-logo" href="#home" aria-label="Home"></a>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+      </ul>
+      <a class="nav-mail" href="#" aria-label="Email link placeholder"></a>
+    </nav>
+  </header>
 
-  <!-- Landing Section -->
-  <section id="landing">
-    <div class="landing-container">
-      <img src="images/profile.jpg" alt="Paul Baniqued" class="profile-img" />
-      <div class="intro-text">
-        <p>HI, I'M</p>
-        <h1>PAUL BANIQUED</h1>
-        <p class="role green">ROBOTICS AND NEUROTECH ENGINEER</p>
-        <p class="role green">VIRTUAL REALITY DEVELOPER</p>
-        <p class="role green">PRODUCT AND PROJECT MANAGER</p>
+  <main id="home" class="page-shell">
+    <section class="hero">
+      <h1>Paul Baniqued, PhD</h1>
+      <h2>Experienced Product and Project Manager<br>across Robotics, VR, and Neurotech</h2>
+      <p class="hero-body" id="hero-rotating-copy">Placeholder text that briefly outlines expertise, approach, and impact in emerging technologies. Another sentence here highlights collaboration, delivery, and user-focused outcomes.</p>
+    </section>
+
+    <section class="partners" id="about">
+      <h2>I work with...</h2>
+      <div class="org-list">
+        <a href="#"><span class="org-emoji">🚀</span>European Space Agency</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">⚙️</span>Scintam Engineering</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🛣️</span>National Highways</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🏭</span>Sellafield Ltd</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🔬</span>UK Atomic Energy Authority</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🇯🇵</span>Japan Atomic Energy Agency</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🌐</span>OECD Nuclear Energy Agency</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🏗️</span>Amentum</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🤖</span>RAICo</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🎓</span>University of Glasgow</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🤖</span>Bristol Robotics Laboratory</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🎓</span>University of Leeds</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">💡</span>Ideaspace Ventures</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🏛️</span>De La Salle University EDA-IBEHT</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🌍</span>Europ Continents</a>
+        <span class="org-separator">•</span>
+        <a href="#"><span class="org-emoji">🧪</span>R&amp;D Center for Membrane Technology</a>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- About Me Section -->
-  <section id="about">
-    <div class="marquee">
-      <div class="marquee-content">
-        ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     ABOUT ME     -     
-      </div>
-    </div>
-
-    <div class="slider-container">
-      <div class="slider" id="slider">
-        <div class="slide active">
-          <img src="images/placeholder_about3.gif" alt="About GIF 3" />
-          <h2>Experienced Robotics Engineer and Virtual Reality Developer</h2>
-          <p>With over a decade of experience in robotics engineering and six years in virtual reality development, I have dedicated 
-            my academic career to designing innovative robotic systems, simulations, and VR interfaces for real-world applications.</p>
+    <section class="featured" id="projects">
+      <h2>Featured Projects</h2>
+      <p class="section-body">Placeholder text introducing the types of projects highlighted here and the value they deliver. A second sentence sets expectations for outcomes, impact, and the mix of technical and managerial work.</p>
+      <div class="featured-grid">
+        <div class="project-card">
+          <div class="project-icon"></div>
+          <div class="project-copy">
+            <h3>Project One</h3>
+            <p>Short description about scope, role, and impact.</p>
+          </div>
         </div>
-        <div class="slide">
-          <img src="images/placeholder_about2.gif" alt="About GIF 2" />
-          <h2>User-Centred Research and Design Thinking</h2>
-          <p>I apply a user-centred approach to my work, creating meaningful product designs and prototypes. 
-            I have conducted effective and empathetic user studies for various hardware and software products, enabling organisations to gain deeper insights into their customers.</p>
+        <div class="project-card">
+          <div class="project-icon"></div>
+          <div class="project-copy">
+            <h3>Project Two</h3>
+            <p>Short description about scope, role, and impact.</p>
+          </div>
         </div>
-        <div class="slide">
-          <img src="images/placeholder_about3.gif" alt="About GIF 3" />
-          <h2>Strategic Product and Project Manager</h2>
-          <p>With a portfolio that includes managing ambitious programmes in robotics, artificial intelligence, and health technologies, 
-            I have led multidisciplinary teams of academics, engineers, and business leaders. I collaborate with stakeholders to streamline processes, secure successful funding proposals, and deliver impactful solutions for my organisations and their communities.</p>
+        <div class="project-card">
+          <div class="project-icon"></div>
+          <div class="project-copy">
+            <h3>Project Three</h3>
+            <p>Short description about scope, role, and impact.</p>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-icon"></div>
+          <div class="project-copy">
+            <h3>Project Four</h3>
+            <p>Short description about scope, role, and impact.</p>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-icon"></div>
+          <div class="project-copy">
+            <h3>Project Five</h3>
+            <p>Short description about scope, role, and impact.</p>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-icon"></div>
+          <div class="project-copy">
+            <h3>Project Six</h3>
+            <p>Short description about scope, role, and impact.</p>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-icon"></div>
+          <div class="project-copy">
+            <h3>Project Seven</h3>
+            <p>Short description about scope, role, and impact.</p>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-icon"></div>
+          <div class="project-copy">
+            <h3>Project Eight</h3>
+            <p>Short description about scope, role, and impact.</p>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-icon"></div>
+          <div class="project-copy">
+            <h3>Project Nine</h3>
+            <p>Short description about scope, role, and impact.</p>
+          </div>
         </div>
       </div>
-      <button class="slider-nav left" onclick="moveSlide(-1)">&#10094;</button>
-      <button class="slider-nav right" onclick="moveSlide(1)">&#10095;</button>
-    </div>
-
-    <!-- 
-    <div class="button-container">
-      <a href="#" class="section-button">→ More About Me</a>
-    </div>
-    -->
-
-  </section>
-
-  <!-- Projects Section -->
-  <section id="projects">
-    <div class="marquee">
-      <div class="marquee-content">
-        PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     PROJECTS     -     
+      <div class="featured-link-row">
+        <a class="featured-link" href="#">See all projects &gt;&gt;</a>
       </div>
-    </div>
-
-    <div class="project-grid">
-      <div class="project-card">
-        <div class="project-img-container">
-          <img src="images/project_cradle.jpg" alt="Project 1" />
-          <div class="overlay"></div>
-        </div>
-        <h3>CRADLE Robotics and AI Prosperity Partnership</h3>
-        <p class="project-description">Technical Program Manager</p>
-      </div>
-      <div class="project-card">
-        <div class="project-img-container">
-          <img src="images/project_rai.jpg" alt="Project 2" />
-          <div class="overlay"></div>
-        </div>
-        <h3>Manchester Centre for Robotics and AI</h3>
-        <p class="project-description">Technical Program Manager</p>
-      </div>
-      <div class="project-card">
-        <div class="project-img-container">
-          <img src="images/project_sarese.jpg" alt="Project 3" />
-          <div class="overlay"></div>
-        </div>
-        <h3>SARESE</h3>
-        <p class="project-description">VR Developer, Robotics Engineer, Postdoc Researcher</p>
-      </div>
-      <div class="project-card">
-        <div class="project-img-container">
-          <img src="images/project_rain.jpg" alt="Project 4" />
-          <div class="overlay"></div>
-        </div>
-        <h3>Robotics and AI in Nuclear</h3>
-        <p class="project-description">VR Developer, Robotics Engineer, Postdoc Researcher</p>
-      </div>
-      <div class="project-card">
-        <div class="project-img-container">
-          <img src="images/project_icon.jpg" alt="Project 5" />
-          <div class="overlay"></div>
-        </div>
-        <h3>Immersive Cognition Laboratory</h3>
-        <p class="project-description">Research Engineer, PhD Researcher</p>
-      </div>
-      <div class="project-card">
-        <div class="project-img-container">
-          <img src="images/project_agapay.jpg" alt="Project 6" />
-          <div class="overlay"></div>
-        </div>
-        <h3>Agapay Project</h3>
-        <p class="project-description">Lead Research Engineer</p>
-      </div>
-    </div>
-
-    <div class="button-container">
-      <a href="#" class="section-button">→ View Full Portfolio</a>
-    </div>
-  </section>
-
-  <!-- Connect Section -->
-  <section id="connect">
-    <div class="marquee">
-      <div class="marquee-content">
-        LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     LET'S CONNECT     -     
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-left">© P.D.E. Baniqued</div>
-    <div class="footer-center">
-      <a href="#">LinkedIn</a> | <a href="#">GitHub</a> | <a href="#">Contact</a>
-    </div>
-    <div class="footer-right"><a href="#landing">Back to Top</a></div>
-  </footer>
-
-  <!-- JS -->
+    </section>
+  </main>
   <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const totalSlides = slides.length;
+    const heroCopy = document.getElementById('hero-rotating-copy');
+    const heroSentences = [
+      'I have led multidisciplinary teams of academics, engineers, and business leaders.',
+      'I work with stakeholders to streamline processes, secure successful funding proposals, and deliver impactful solutions for my organisations and their communities.',
+      'I apply a user-centred approach to my work, creating meaningful product designs and prototypes.'
+    ];
+    let heroIndex = 0;
 
-    function showSlide(index) {
-      slides.forEach((slide, i) => {
-        slide.classList.remove('active');
-        slide.style.opacity = '0';
-        if (i === index) {
-          slide.classList.add('active');
-          slide.style.opacity = '1';
-        }
-      });
-    }
-
-    function moveSlide(direction) {
-      currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
-      showSlide(currentSlide);
-      resetAutoSlide();
-    }
-
-    let slideInterval = setInterval(() => moveSlide(1), 5000);
-
-    function resetAutoSlide() {
-      clearInterval(slideInterval);
-      slideInterval = setInterval(() => moveSlide(1), 5000);
-    }
-
-    showSlide(currentSlide);
+    setInterval(() => {
+      heroIndex = (heroIndex + 1) % heroSentences.length;
+      heroCopy.textContent = heroSentences[heroIndex];
+    }, 5000);
   </script>
-
 </body>
 </html>
