@@ -140,10 +140,13 @@ a:hover {
 }
 
 .project-icon {
-  width: 48px;
-  height: 48px;
-  background: #0d1018;
-  border: 1px solid var(--border);
+  width: 56px;
+  height: 56px;
+  background: transparent;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
 }
 
 .project-copy h3 {
@@ -271,7 +274,7 @@ a:hover {
   display: block;
   width: 36px;
   height: 36px;
-  background: #0d1018;
+  background: #0d1018 url('assets/project-icons/icon-main.png') center/contain no-repeat;
   border: 1px solid var(--border);
   border-radius: 0;
   position: absolute;
@@ -282,7 +285,7 @@ a:hover {
   display: block;
   width: 36px;
   height: 36px;
-  background: #0d1018;
+  background: #0d1018 url('assets/project-icons/icon-mailcontact.png') center/70% no-repeat;
   border: 1px solid var(--border);
   border-radius: 0;
   position: absolute;
@@ -291,7 +294,7 @@ a:hover {
 
 .top-nav ul a {
   color: var(--accent);
-  font-family: var(--font-heading);
+  font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
   letter-spacing: 0.08em;
   font-size: 0.85rem;
@@ -312,4 +315,81 @@ a:hover {
 .nav-mail {
   padding: 0;
   border-radius: 0;
+}
+
+.site-footer {
+  width: 100%;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  background-image:
+    linear-gradient(0deg, rgba(255, 255, 255, 0.015) 0%, rgba(255, 255, 255, 0.02) 100%),
+    radial-gradient(1px 1px at 0 0, rgba(255, 255, 255, 0.06), transparent 60%);
+  background-size: 100% 100%, 140px 140px;
+  background-repeat: no-repeat, repeat;
+  padding: 32px 6vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.footer-left h3 {
+  font-size: 1rem;
+  font-family: var(--font-heading);
+  margin-bottom: 10px;
+  color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  letter-spacing: 0.01em;
+  padding: 6px 10px;
+  border-radius: 10px;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--accent);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.footer-icon {
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(180deg, #4a4f5a, #2e323a);
+  display: inline-block;
+  border-radius: 3px;
+}
+
+.icon-linkedin {
+  background: url('assets/project-icons/icon-linkedin.png') center/contain no-repeat;
+}
+
+.icon-github {
+  background: url('assets/project-icons/icon-github.png') center/contain no-repeat;
+}
+
+.icon-mail {
+  background: url('assets/project-icons/icon-mail.png') center/contain no-repeat;
+}
+
+.footer-right p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: right;
 }
