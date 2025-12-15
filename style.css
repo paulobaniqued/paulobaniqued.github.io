@@ -914,6 +914,52 @@ a:hover {
   gap: 8px;
 }
 
+.template-report-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.report-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+
+.report-card:hover,
+.report-card:focus-visible {
+  border-color: rgba(124, 255, 156, 0.6);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.report-card img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+
+.report-card .template-caption {
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .template-report-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .template-pagination {
   width: 100%;
   display: flex;
