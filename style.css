@@ -74,12 +74,11 @@ a:hover {
 }
 
 .hero-grid {
-  width: min(1200px, 100%);
+  width: 100%;
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
   gap: clamp(26px, 4vw, 88px);
-  align-items: flex-end;
-  transform: translateY(-125px);
+  align-items: center;
 }
 
 .hero-left {
@@ -87,7 +86,6 @@ a:hover {
   flex-direction: column;
   justify-content: center;
   gap: 10px;
-  margin-top: 0;
 }
 
 .hero-media {
@@ -105,7 +103,7 @@ a:hover {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
   background: #0d1018;
   display: block;
-  margin-top: 0;
+  margin-top: clamp(-32px, -4vh, -16px);
 }
 
 .hero h1 {
@@ -138,12 +136,6 @@ a:hover {
 @media (max-width: 900px) {
   .hero-grid {
     grid-template-columns: 1fr;
-    align-items: flex-start;
-    transform: none;
-  }
-
-  .hero-left {
-    margin-top: 0;
   }
 
   .hero-media {
