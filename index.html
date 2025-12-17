@@ -32,7 +32,16 @@
 <p class="hero-body" id="hero-rotating-copy">I have over a decade of experience in the robotics R&amp;D space, spanning multiple disciplines such as product design, human–robot interaction, neuroscience, immersive tech, and cyber-physical systems.</p>
 </div>
 <div class="hero-media">
-<video class="hero-video" src="assets/project-images/home-reel.mp4" autoplay loop muted playsinline></video>
+<div class="hero-media-card" id="hero-media-card">
+<video class="hero-video hero-layer is-active" id="hero-reel" src="assets/project-images/home-reel.mp4" autoplay loop muted playsinline></video>
+<div class="hero-globe hero-layer" id="hero-globe" aria-hidden="true">
+<div class="globe-hint" id="globe-hint">Drag to rotate</div>
+</div>
+</div>
+<div class="hero-toggle">
+<button class="hero-toggle-btn is-active" data-mode="reel" type="button">Highlights Reel</button>
+<button class="hero-toggle-btn" data-mode="globe" type="button">Interactive Demo</button>
+</div>
 </div>
 </div>
 </section>
@@ -168,6 +177,7 @@
 <p>Copyright © Paul Baniqued 2025 All Rights Reserved.</p>
 </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
 <script>
     const heroCopy = document.getElementById('hero-rotating-copy');
     const heroSentences = [
@@ -182,5 +192,339 @@
       heroCopy.textContent = heroSentences[heroIndex];
     }, 6000);
   </script>
+<script>
+  (() => {
+    const heroReel = document.getElementById('hero-reel');
+    const heroGlobe = document.getElementById('hero-globe');
+    const globeHint = document.getElementById('globe-hint');
+    const heroToggleButtons = document.querySelectorAll('.hero-toggle-btn');
+
+    let globeHasInitialized = false;
+    let resizeHeroGlobe = null;
+
+    heroToggleButtons.forEach((btn) => {
+      btn.addEventListener('click', () => setHeroMode(btn.dataset.mode));
+    });
+
+    function setHeroMode(mode){
+      heroToggleButtons.forEach((btn) => {
+        btn.classList.toggle('is-active', btn.dataset.mode === mode);
+      });
+
+      const showGlobe = mode === 'globe';
+      heroGlobe.classList.toggle('is-active', showGlobe);
+      heroReel.classList.toggle('is-active', !showGlobe);
+      heroGlobe.setAttribute('aria-hidden', showGlobe ? 'false' : 'true');
+      heroReel.setAttribute('aria-hidden', showGlobe ? 'true' : 'false');
+
+      if (showGlobe){
+        heroReel.pause();
+        if (!globeHasInitialized){
+          initHeroGlobe();
+          globeHasInitialized = true;
+        } else if (typeof resizeHeroGlobe === 'function'){
+          resizeHeroGlobe();
+        }
+      } else {
+        heroReel.play().catch(() => {});
+      }
+    }
+
+    function initHeroGlobe(){
+      if (typeof THREE === 'undefined'){
+        console.warn('THREE.js did not load, globe disabled.');
+        return;
+      }
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0b0b0b);
+
+      const rect = heroGlobe.getBoundingClientRect();
+      const camera = new THREE.PerspectiveCamera(45, rect.width / Math.max(rect.height, 1), 0.1, 100);
+      camera.position.set(0, 0, 4.4);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(Math.max(rect.width, 1), Math.max(rect.height, 1));
+      heroGlobe.appendChild(renderer.domElement);
+
+      function resizeGlobe(){
+        const bounds = heroGlobe.getBoundingClientRect();
+        const width = Math.max(bounds.width, 1);
+        const height = Math.max(bounds.height, 1);
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      }
+      resizeHeroGlobe = resizeGlobe;
+      window.addEventListener('resize', resizeGlobe);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+
+      const key = new THREE.DirectionalLight(0xffffff, 1.10);
+      key.position.set(4, 3, 6);
+      scene.add(key);
+
+      const fill = new THREE.DirectionalLight(0xffffff, 0.35);
+      fill.position.set(-5, 2, 4);
+      scene.add(fill);
+
+      const rim = new THREE.DirectionalLight(0xffffff, 0.60);
+      rim.position.set(-6, -1.5, -6);
+      scene.add(rim);
+
+      const world = new THREE.Group();
+      scene.add(world);
+
+      const TAU = Math.PI * 2;
+      function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+      function smoothstep(a,b,x){
+        const t = clamp01((x-a)/(b-a));
+        return t*t*(3-2*t);
+      }
+      function dLon(a,b){
+        let d = Math.abs(a-b);
+        return Math.min(d, TAU - d);
+      }
+      function blob(lon, lat, lon0, lat0, sx, sy, amp){
+        const dx = dLon(lon, lon0) / sx;
+        const dy = Math.abs(lat - lat0) / sy;
+        return amp * Math.exp(-(dx*dx + dy*dy));
+      }
+
+      const radius = 1.25;
+      const detail = 8;
+      const globeGeo = new THREE.IcosahedronGeometry(radius, detail);
+
+      const pos = globeGeo.getAttribute('position');
+      const colours = new Float32Array(pos.count * 3);
+
+      const ocean = new THREE.Color(0x0F78BE);
+      const land  = new THREE.Color(0x02590F);
+
+      function landField(lon, lat){
+        let v = 0;
+
+        v += blob(lon, lat, -2.05,  0.62, 0.55, 0.34, 1.35);
+        v += blob(lon, lat, -2.45,  0.78, 0.42, 0.22, 0.85);
+        v += blob(lon, lat, -1.78,  0.30, 0.30, 0.18, 0.80);
+        v += blob(lon, lat, -1.62,  0.12, 0.22, 0.14, 0.60);
+        v += blob(lon, lat, -2.10,  0.42, 0.28, 0.18, 0.55);
+
+        v += blob(lon, lat, -1.28, -0.52, 0.42, 0.58, 1.30);
+        v += blob(lon, lat, -1.02, -0.18, 0.30, 0.28, 0.75);
+        v += blob(lon, lat, -1.45, -0.92, 0.26, 0.26, 0.55);
+
+        v += blob(lon, lat,  0.05,  0.66, 0.22, 0.16, 0.90);
+        v += blob(lon, lat,  0.28,  0.72, 0.20, 0.14, 0.75);
+        v += blob(lon, lat,  0.34,  0.54, 0.20, 0.14, 0.60);
+
+        v += blob(lon, lat,  0.33,  0.18, 0.35, 0.62, 1.45);
+        v += blob(lon, lat,  0.54,  0.38, 0.18, 0.20, 0.60);
+        v += blob(lon, lat,  0.18,  0.30, 0.20, 0.18, 0.50);
+
+        v += blob(lon, lat,  0.72,  0.36, 0.22, 0.15, 0.70);
+        v += blob(lon, lat,  1.02,  0.14, 0.22, 0.18, 0.85);
+
+        v += blob(lon, lat,  1.08,  0.58, 0.82, 0.38, 1.40);
+        v += blob(lon, lat,  1.55,  0.46, 0.38, 0.22, 0.95);
+        v += blob(lon, lat,  1.88,  0.38, 0.28, 0.18, 0.75);
+        v += blob(lon, lat,  1.35,  0.30, 0.30, 0.18, 0.55);
+
+        v += blob(lon, lat,  1.58,  0.10, 0.35, 0.20, 0.85);
+        v += blob(lon, lat,  1.78, -0.06, 0.30, 0.18, 0.70);
+
+        v += blob(lon, lat,  2.36, -0.66, 0.46, 0.28, 1.20);
+
+        v += blob(lon, lat, -0.85,  1.05, 0.26, 0.16, 0.80);
+
+        const antarctica = smoothstep(0.82, 1.05, (Math.abs(lat) / (Math.PI/2)));
+        v += 1.15 * antarctica;
+
+        v -= 0.58 * blob(lon, lat, -0.55,  0.10, 0.55, 0.70, 1.0);
+        v -= 0.42 * blob(lon, lat,  2.95,  0.15, 0.75, 0.78, 1.0);
+        v -= 0.28 * blob(lon, lat,  0.90, -0.18, 0.38, 0.28, 1.0);
+        v -= 0.18 * blob(lon, lat,  1.25,  0.05, 0.28, 0.18, 1.0);
+        v -= 0.16 * blob(lon, lat, -1.10,  0.05, 0.32, 0.22, 1.0);
+
+        const u = (lon + Math.PI) / TAU;
+        const w = (lat + Math.PI/2) / Math.PI;
+        const rough =
+          0.07 * Math.sin(u * 18.0 * Math.PI) * Math.sin(w * 12.0 * Math.PI) +
+          0.04 * Math.sin((u + w) * 20.0 * Math.PI) +
+          0.03 * Math.cos((u * 30.0 - w * 18.0) * Math.PI);
+        v += rough;
+
+        const poleMask = 1.0 - Math.pow(Math.abs(Math.sin(lat)), 3.0) * 0.22;
+        v *= poleMask;
+
+        return v;
+      }
+
+      const landThreshold = 0.40;
+      const coastSoftness = 0.20;
+      const landHeight = 0.045;
+      const bumpDetail = 0.012;
+
+      const p = new THREE.Vector3();
+      const dir = new THREE.Vector3();
+
+      for (let i = 0; i < pos.count; i++){
+        p.set(pos.getX(i), pos.getY(i), pos.getZ(i));
+        dir.copy(p).normalize();
+
+        const lon = Math.atan2(dir.z, dir.x);
+        const lat = Math.asin(dir.y);
+
+        const f = landField(lon, lat);
+
+        const t = smoothstep(
+          landThreshold - coastSoftness,
+          landThreshold + coastSoftness * 0.35,
+          f
+        );
+
+        const c = ocean.clone().lerp(land, t);
+        colours[i*3+0] = c.r;
+        colours[i*3+1] = c.g;
+        colours[i*3+2] = c.b;
+
+        const u = (lon + Math.PI) / TAU;
+        const w = (lat + Math.PI/2) / Math.PI;
+        const micro =
+          (Math.sin(u * 34.0 * Math.PI) * Math.sin(w * 26.0 * Math.PI) +
+           Math.cos((u * 28.0 - w * 18.0) * Math.PI)) * 0.5;
+
+        const h = t * (landHeight + bumpDetail * micro);
+
+        p.addScaledVector(dir, h);
+        pos.setXYZ(i, p.x, p.y, p.z);
+      }
+
+      globeGeo.setAttribute('color', new THREE.BufferAttribute(colours, 3));
+      pos.needsUpdate = true;
+      globeGeo.computeVertexNormals();
+
+      const globeMat = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        flatShading: true,
+        roughness: 0.70,
+        metalness: 0.08
+      });
+
+      const globe = new THREE.Mesh(globeGeo, globeMat);
+      world.add(globe);
+
+      const atmoGlowGeo = new THREE.IcosahedronGeometry(radius * 1.08, 4);
+      const atmoGlowMat = new THREE.MeshStandardMaterial({
+        color: 0x7fd6ff,
+        transparent: true,
+        opacity: 0.16,
+        flatShading: true,
+        roughness: 1.0,
+        metalness: 0.0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      const atmoGlow = new THREE.Mesh(atmoGlowGeo, atmoGlowMat);
+      world.add(atmoGlow);
+
+      const hazeGeo = new THREE.IcosahedronGeometry(radius * 1.12, 4);
+      const hazePos = hazeGeo.getAttribute('position');
+      const hazeCols = new Float32Array(hazePos.count * 3);
+      const hazeBase = new THREE.Color(0x9be7ff);
+
+      for (let i = 0; i < hazePos.count; i++){
+        const x = hazePos.getX(i), y = hazePos.getY(i), z = hazePos.getZ(i);
+        const len = Math.sqrt(x*x + y*y + z*z) || 1;
+        const nx = x/len, ny = y/len, nz = z/len;
+
+        const lon = Math.atan2(nz, nx);
+        const lat = Math.asin(ny);
+
+        const u = (lon + Math.PI) / TAU;
+        const v = (lat + Math.PI/2) / Math.PI;
+
+        const bands =
+          0.55 + 0.45 * Math.sin(u * 10.0 * TAU + 0.6) *
+                     Math.sin(v * 6.0  * TAU + 1.2);
+
+        const limb = 1.0 - Math.abs(ny);
+        const alphaBoost = smoothstep(0.15, 0.85, limb);
+
+        const intensity = clamp01(0.25 + 0.55 * bands) * (0.45 + 0.55 * alphaBoost);
+        const c = hazeBase.clone().multiplyScalar(intensity);
+
+        hazeCols[i*3+0] = c.r;
+        hazeCols[i*3+1] = c.g;
+        hazeCols[i*3+2] = c.b;
+      }
+
+      hazeGeo.setAttribute('color', new THREE.BufferAttribute(hazeCols, 3));
+
+      const hazeMat = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.35,
+        flatShading: true,
+        roughness: 1.0,
+        metalness: 0.0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+
+      const haze = new THREE.Mesh(hazeGeo, hazeMat);
+      world.add(haze);
+
+      const state = { down:false, x:0, y:0 };
+      const autoRotateSpeed = 0.0012;
+
+      heroGlobe.addEventListener('pointerdown', (e) => {
+        state.down = true;
+        state.x = e.clientX;
+        state.y = e.clientY;
+        heroGlobe.classList.add('grabbing');
+        heroGlobe.setPointerCapture(e.pointerId);
+        globeHint.style.opacity = '0';
+      });
+
+      heroGlobe.addEventListener('pointermove', (e) => {
+        if (!state.down) return;
+        const dx = e.clientX - state.x;
+        const dy = e.clientY - state.y;
+
+        const speed = 0.0065;
+        world.rotation.y += dx * speed;
+        world.rotation.x = Math.max(-1.2, Math.min(1.2, world.rotation.x + dy * speed));
+
+        state.x = e.clientX;
+        state.y = e.clientY;
+      });
+
+      heroGlobe.addEventListener('pointerup', (e) => {
+        state.down = false;
+        heroGlobe.classList.remove('grabbing');
+        if (heroGlobe.hasPointerCapture && heroGlobe.hasPointerCapture(e.pointerId)){
+          heroGlobe.releasePointerCapture(e.pointerId);
+        }
+      });
+
+      function animate(){
+        requestAnimationFrame(animate);
+
+        if (!state.down){
+          world.rotation.y += autoRotateSpeed;
+        }
+
+        atmoGlow.rotation.y += 0.0012;
+        haze.rotation.y     += 0.0022;
+        haze.rotation.x     += 0.00035;
+
+        renderer.render(scene, camera);
+      }
+      animate();
+    }
+  })();
+</script>
 </body>
 </html>

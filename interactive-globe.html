@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interactive Globe (Procedural)</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
+
+  <style>
+    body{
+      margin:0; background:#0b0b0b; height:100vh;
+      display:grid; place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    #card{
+      width:1000px; height:1000px;
+      border-radius:16px; overflow:hidden;
+      position:relative;
+      background:#0b0b0b;
+      box-shadow:0 20px 60px rgba(0,0,0,.55);
+      cursor:grab; user-select:none;
+    }
+    #card.grabbing{ cursor:grabbing; }
+    #hint{
+      position:absolute; top:14px; left:14px;
+      font-size:12px; color:rgba(255,255,255,.85);
+      background:rgba(0,0,0,.55);
+      padding:8px 10px; border-radius:10px;
+      pointer-events:none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="card">
+    <div id="hint">Drag to rotate</div>
+  </div>
+
+<script>
+(() => {
+  const card = document.getElementById("card");
+  const hint = document.getElementById("hint");
+
+  // --- renderer/camera ---
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0b0b0b);
+
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 0, 4.4);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(1000, 1000);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  card.appendChild(renderer.domElement);
+
+  // --- lights ---
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+
+  const key = new THREE.DirectionalLight(0xffffff, 1.10);
+  key.position.set(4, 3, 6);
+  scene.add(key);
+
+  const fill = new THREE.DirectionalLight(0xffffff, 0.35);
+  fill.position.set(-5, 2, 4);
+  scene.add(fill);
+
+  const rim = new THREE.DirectionalLight(0xffffff, 0.60);
+  rim.position.set(-6, -1.5, -6);
+  scene.add(rim);
+
+  // --- world group (rotate this; no pan/zoom) ---
+  const world = new THREE.Group();
+  scene.add(world);
+
+  // ============================================================
+  // Helpers
+  // ============================================================
+  const TAU = Math.PI * 2;
+
+  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+  function smoothstep(a,b,x){
+    const t = clamp01((x-a)/(b-a));
+    return t*t*(3-2*t);
+  }
+  function dLon(a,b){
+    let d = Math.abs(a-b);
+    return Math.min(d, TAU - d);
+  }
+  function blob(lon, lat, lon0, lat0, sx, sy, amp){
+    const dx = dLon(lon, lon0) / sx;
+    const dy = Math.abs(lat - lat0) / sy;
+    return amp * Math.exp(-(dx*dx + dy*dy));
+  }
+
+  // ============================================================
+  // 1) Higher-res sphere (more triangles)
+  // ============================================================
+  const radius = 1.25;
+  const detail = 8; // ✅ higher resolution (5 if you want lighter)
+  const globeGeo = new THREE.IcosahedronGeometry(radius, detail);
+
+  const pos = globeGeo.getAttribute("position");
+  const colours = new Float32Array(pos.count * 3);
+
+  const ocean = new THREE.Color(0x0F78BE);
+  const land  = new THREE.Color(0x02590F);
+
+  // ============================================================
+  // 2) More map-like landField (refined blobs + extra ocean cuts)
+  // ============================================================
+  function landField(lon, lat){
+    let v = 0;
+
+    // --- North America (better outline) ---
+    v += blob(lon, lat, -2.05,  0.62, 0.55, 0.34, 1.35); // Canada/US core
+    v += blob(lon, lat, -2.45,  0.78, 0.42, 0.22, 0.85); // Alaska
+    v += blob(lon, lat, -1.78,  0.30, 0.30, 0.18, 0.80); // Mexico
+    v += blob(lon, lat, -1.62,  0.12, 0.22, 0.14, 0.60); // Central America
+    v += blob(lon, lat, -2.10,  0.42, 0.28, 0.18, 0.55); // West coast bulge
+
+    // --- South America (taper) ---
+    v += blob(lon, lat, -1.28, -0.52, 0.42, 0.58, 1.30);
+    v += blob(lon, lat, -1.02, -0.18, 0.30, 0.28, 0.75);
+    v += blob(lon, lat, -1.45, -0.92, 0.26, 0.26, 0.55);
+
+    // --- Europe (more distinct) ---
+    v += blob(lon, lat,  0.05,  0.66, 0.22, 0.16, 0.90); // W Europe
+    v += blob(lon, lat,  0.28,  0.72, 0.20, 0.14, 0.75); // Scandinavia
+    v += blob(lon, lat,  0.34,  0.54, 0.20, 0.14, 0.60); // E Europe
+
+    // --- Africa (better proportions) ---
+    v += blob(lon, lat,  0.33,  0.18, 0.35, 0.62, 1.45);
+    v += blob(lon, lat,  0.54,  0.38, 0.18, 0.20, 0.60); // Horn
+    v += blob(lon, lat,  0.18,  0.30, 0.20, 0.18, 0.50); // West Africa
+
+    // --- Middle East / India ---
+    v += blob(lon, lat,  0.72,  0.36, 0.22, 0.15, 0.70);
+    v += blob(lon, lat,  1.02,  0.14, 0.22, 0.18, 0.85);
+
+    // --- Eurasia / Asia (extra shaping) ---
+    v += blob(lon, lat,  1.08,  0.58, 0.82, 0.38, 1.40); // Russia-ish
+    v += blob(lon, lat,  1.55,  0.46, 0.38, 0.22, 0.95); // China-ish
+    v += blob(lon, lat,  1.88,  0.38, 0.28, 0.18, 0.75); // Korea/Japan-ish
+    v += blob(lon, lat,  1.35,  0.30, 0.30, 0.18, 0.55); // Central Asia shaping
+
+    // --- SE Asia / Indonesia ---
+    v += blob(lon, lat,  1.58,  0.10, 0.35, 0.20, 0.85);
+    v += blob(lon, lat,  1.78, -0.06, 0.30, 0.18, 0.70);
+
+    // --- Australia ---
+    v += blob(lon, lat,  2.36, -0.66, 0.46, 0.28, 1.20);
+
+    // --- Greenland ---
+    v += blob(lon, lat, -0.85,  1.05, 0.26, 0.16, 0.80);
+
+    // --- Antarctica band ---
+    const antarctica = smoothstep(0.82, 1.05, (Math.abs(lat) / (Math.PI/2)));
+    v += 1.15 * antarctica;
+
+    // --- Ocean cuts (extra carving for realism) ---
+    v -= 0.58 * blob(lon, lat, -0.55,  0.10, 0.55, 0.70, 1.0); // Atlantic-ish
+    v -= 0.42 * blob(lon, lat,  2.95,  0.15, 0.75, 0.78, 1.0); // Pacific-ish (wrap)
+    v -= 0.28 * blob(lon, lat,  0.90, -0.18, 0.38, 0.28, 1.0); // Indian Ocean-ish
+    v -= 0.18 * blob(lon, lat,  1.25,  0.05, 0.28, 0.18, 1.0); // SEA water gap
+    v -= 0.16 * blob(lon, lat, -1.10,  0.05, 0.32, 0.22, 1.0); // Caribbean-ish
+
+    // Coast roughness (toned down so it looks less "noisy")
+    const u = (lon + Math.PI) / TAU;
+    const w = (lat + Math.PI/2) / Math.PI;
+    const rough =
+      0.07 * Math.sin(u * 18.0 * Math.PI) * Math.sin(w * 12.0 * Math.PI) +
+      0.04 * Math.sin((u + w) * 20.0 * Math.PI) +
+      0.03 * Math.cos((u * 30.0 - w * 18.0) * Math.PI);
+    v += rough;
+
+    // Pole reduction (except Antarctica)
+    const poleMask = 1.0 - Math.pow(Math.abs(Math.sin(lat)), 3.0) * 0.22;
+    v *= poleMask;
+
+    return v;
+  }
+
+  // ============================================================
+  // 3) Displace land + vertex colours
+  // ============================================================
+  const landThreshold = 0.40;
+  const coastSoftness = 0.20;
+  const landHeight = 0.045;   // slightly cleaner at higher detail
+  const bumpDetail = 0.012;   // reduced vs your 0.035 (less bumpy at higher res)
+
+  const p = new THREE.Vector3();
+  const dir = new THREE.Vector3();
+
+  for (let i = 0; i < pos.count; i++){
+    p.set(pos.getX(i), pos.getY(i), pos.getZ(i));
+    dir.copy(p).normalize();
+
+    const lon = Math.atan2(dir.z, dir.x);
+    const lat = Math.asin(dir.y);
+
+    const f = landField(lon, lat);
+
+    const t = smoothstep(
+      landThreshold - coastSoftness,
+      landThreshold + coastSoftness * 0.35,
+      f
+    );
+
+    const c = ocean.clone().lerp(land, t);
+    colours[i*3+0] = c.r;
+    colours[i*3+1] = c.g;
+    colours[i*3+2] = c.b;
+
+    // reduced-frequency bumps (so continents read cleaner)
+    const u = (lon + Math.PI) / TAU;
+    const w = (lat + Math.PI/2) / Math.PI;
+    const micro =
+      (Math.sin(u * 34.0 * Math.PI) * Math.sin(w * 26.0 * Math.PI) +
+       Math.cos((u * 28.0 - w * 18.0) * Math.PI)) * 0.5;
+
+    const h = t * (landHeight + bumpDetail * micro);
+
+    p.addScaledVector(dir, h);
+    pos.setXYZ(i, p.x, p.y, p.z);
+  }
+
+  globeGeo.setAttribute("color", new THREE.BufferAttribute(colours, 3));
+  pos.needsUpdate = true;
+  globeGeo.computeVertexNormals();
+
+  const globeMat = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    flatShading: true,
+    roughness: 0.70,
+    metalness: 0.08
+  });
+
+  const globe = new THREE.Mesh(globeGeo, globeMat);
+  world.add(globe);
+
+  // ============================================================
+  // 4) Atmosphere / haze (same as yours)
+  // ============================================================
+  const atmoGlowGeo = new THREE.IcosahedronGeometry(radius * 1.08, 4);
+  const atmoGlowMat = new THREE.MeshStandardMaterial({
+    color: 0x7fd6ff,
+    transparent: true,
+    opacity: 0.16,
+    flatShading: true,
+    roughness: 1.0,
+    metalness: 0.0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+  const atmoGlow = new THREE.Mesh(atmoGlowGeo, atmoGlowMat);
+  world.add(atmoGlow);
+
+  const hazeGeo = new THREE.IcosahedronGeometry(radius * 1.12, 4);
+  const hazePos = hazeGeo.getAttribute("position");
+  const hazeCols = new Float32Array(hazePos.count * 3);
+  const hazeBase = new THREE.Color(0x9be7ff);
+
+  for (let i = 0; i < hazePos.count; i++){
+    const x = hazePos.getX(i), y = hazePos.getY(i), z = hazePos.getZ(i);
+    const len = Math.sqrt(x*x + y*y + z*z) || 1;
+    const nx = x/len, ny = y/len, nz = z/len;
+
+    const lon = Math.atan2(nz, nx);
+    const lat = Math.asin(ny);
+
+    const u = (lon + Math.PI) / TAU;
+    const v = (lat + Math.PI/2) / Math.PI;
+
+    const bands =
+      0.55 + 0.45 * Math.sin(u * 10.0 * TAU + 0.6) *
+                 Math.sin(v * 6.0  * TAU + 1.2);
+
+    const limb = 1.0 - Math.abs(ny);
+    const alphaBoost = smoothstep(0.15, 0.85, limb);
+
+    const intensity = clamp01(0.25 + 0.55 * bands) * (0.45 + 0.55 * alphaBoost);
+    const c = hazeBase.clone().multiplyScalar(intensity);
+
+    hazeCols[i*3+0] = c.r;
+    hazeCols[i*3+1] = c.g;
+    hazeCols[i*3+2] = c.b;
+  }
+
+  hazeGeo.setAttribute("color", new THREE.BufferAttribute(hazeCols, 3));
+
+  const hazeMat = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.35,
+    flatShading: true,
+    roughness: 1.0,
+    metalness: 0.0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+
+  const haze = new THREE.Mesh(hazeGeo, hazeMat);
+  world.add(haze);
+
+  // ============================================================
+  // Interaction: drag rotate only (no pan/zoom)
+  // ============================================================
+  const autoRotateSpeed = 0.0012;
+  const state = { down:false, x:0, y:0 };
+
+  card.addEventListener("pointerdown", (e) => {
+    state.down = true;
+    state.x = e.clientX;
+    state.y = e.clientY;
+    card.classList.add("grabbing");
+    card.setPointerCapture(e.pointerId);
+    hint.style.opacity = 0.0;
+  });
+
+  card.addEventListener("pointermove", (e) => {
+    if (!state.down) return;
+    const dx = e.clientX - state.x;
+    const dy = e.clientY - state.y;
+
+    const speed = 0.0065;
+    world.rotation.y += dx * speed;
+    world.rotation.x += dy * speed;
+    world.rotation.x = Math.max(-1.2, Math.min(1.2, world.rotation.x));
+
+    state.x = e.clientX;
+    state.y = e.clientY;
+  });
+
+  card.addEventListener("pointerup", () => {
+    state.down = false;
+    card.classList.remove("grabbing");
+  });
+
+  // ============================================================
+  // Animation loop
+  // ============================================================
+  function animate(){
+    requestAnimationFrame(animate);
+
+    if (!state.down){
+      world.rotation.y += autoRotateSpeed;
+    }
+
+    atmoGlow.rotation.y += 0.0012;
+    haze.rotation.y     += 0.0022;
+    haze.rotation.x     += 0.00035;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>

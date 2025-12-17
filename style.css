@@ -90,20 +90,99 @@ a:hover {
 
 .hero-media {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+  gap: 10px;
 }
 
-.hero-video {
+.hero-media-card {
+  position: relative;
   width: 100%;
   max-width: 520px;
-  height: auto;
+  aspect-ratio: 1;
   border-radius: 6px;
   border: 1px solid var(--border);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
   background: #0d1018;
-  display: block;
   margin-top: clamp(-32px, -4vh, -16px);
+  overflow: hidden;
+}
+
+.hero-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  display: none;
+}
+
+.hero-layer.is-active {
+  display: block;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-globe {
+  background: #0b0b0b;
+  cursor: grab;
+}
+
+.hero-globe.grabbing {
+  cursor: grabbing;
+}
+
+.globe-hint {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 6px 8px;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hero-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.hero-toggle-btn {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--muted);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.hero-toggle-btn:hover,
+.hero-toggle-btn:focus-visible {
+  color: var(--accent);
+  border-color: rgba(124, 255, 156, 0.6);
+  background: rgba(255, 255, 255, 0.03);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.hero-toggle-btn.is-active {
+  color: var(--text);
+  border-color: rgba(124, 255, 156, 0.75);
+  background: rgba(124, 255, 156, 0.06);
 }
 
 .hero h1 {
@@ -142,7 +221,7 @@ a:hover {
     justify-content: flex-start;
   }
 
-  .hero-video {
+  .hero-media-card {
     max-width: 100%;
     margin-top: 18px;
   }
