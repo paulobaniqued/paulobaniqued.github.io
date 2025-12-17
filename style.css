@@ -133,6 +133,7 @@ a:hover {
 .hero-globe {
   background: #0b0b0b;
   cursor: grab;
+  touch-action: none; /* allow smooth drag on touch without scrolling */
 }
 
 .hero-globe.grabbing {
